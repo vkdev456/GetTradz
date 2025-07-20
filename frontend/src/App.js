@@ -1,10 +1,10 @@
-// src/App.js
 import React from 'react';
+import Homepage from './landing_page/home/HomePage';
 
 function App() {
   return (
     <div>
-      <h1>Welcome to GetTradz</h1>
+      <Homepage />
     </div>
   );
 }
