@@ -28,27 +28,27 @@ function Navbar() {
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav ms-auto mb-lg-0"> {/* <-- this line changed */}
             <li className="nav-item">
-              <a className="nav-link active" aria-current="page" href="#">
+              <a className="nav-link active" aria-current="page" href="/signup">
                 Signup
               </a>
             </li>
             <li className="nav-item">
-              <a className="nav-link active" href="#">
+              <a className="nav-link active" href="/about">
                 About
               </a>
             </li>
             <li className="nav-item">
-              <a className="nav-link active" href="#">
+              <a className="nav-link active" href="/product">
                 Product
               </a>
             </li>
             <li className="nav-item">
-              <a className="nav-link active" href="#">
+              <a className="nav-link active" href="/pricing">
                 Pricing
               </a>
             </li>
             <li className="nav-item">
-              <a className="nav-link active" href="#">
+              <a className="nav-link active" href="/support">
                 Support
               </a>
             </li>
