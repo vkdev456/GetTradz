@@ -47,6 +47,21 @@ app.post("/newOrder",async(req,res)=>{
 
 });
 
+app.delete("/positions/:id", async (req, res) => {
+  try {
+    const deletedPosition = await PositionsModel.findByIdAndDelete(req.params.id);
+
+    if (!deletedPosition) {
+      return res.status(404).json({ message: "Position not found" });
+    }
+
+    res.json({ message: "Position sold successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting position", error });
+  }
+});
+
+
 mongoose.connect(url)
   .then(() => {
     console.log("Connected to DB");
