@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
-import axios from "axios";
+import axios from "axios";//as we connect from api end point we require axios
+
 
 import GeneralContext from "./GeneralContext";
 
@@ -36,8 +37,8 @@ const BuyActionWindow = ({ uid }) => {
               type="number"
               name="qty"
               id="qty"
-              onChange={(e) => setStockQuantity(e.target.value)}
-              value={stockQuantity}
+              onChange={(e) => setStockQuantity(e.target.value)}//taking input and setting 
+              value={stockQuantity}//that displays to user
             />
           </fieldset>
           <fieldset>
