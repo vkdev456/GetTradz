@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 function Navbar() {
   return (
@@ -7,13 +8,13 @@ function Navbar() {
       style={{ backgroundColor: "#FFF" }}
     >
       <div className="container p-2">
-        <a className="navbar-brand" href="#">
-          <img
-            src="media/images/logo.svg"
-            style={{ width: "25%" }}
-            alt="Logo"
-          />
-        </a>
+         <Link className="navbar-brand" to="/">
+           <img
+              src="media/images/logo.svg"
+              style={{ width: "25%" }}
+             alt="Logo"
+            />
+        </Link>
         <button
           className="navbar-toggler"
           type="button"
@@ -30,21 +31,6 @@ function Navbar() {
             <li className="nav-item">
               <a className="nav-link active" aria-current="page" href="/signup">
                 Signup
-              </a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link active" href="/about">
-                About
-              </a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link active" href="/product">
-                Product
-              </a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link active" href="/pricing">
-                Pricing
               </a>
             </li>
             <li className="nav-item">
