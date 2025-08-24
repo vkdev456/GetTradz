@@ -1,5 +1,3 @@
-
-
 .order-table {
   overflow-x: auto;
   margin-bottom: 20px;
@@ -23,7 +21,6 @@
   font-weight: 600;
   color: #333;
 }
-
 
 .action-buttons {
   padding: 8px !important;
@@ -87,7 +84,7 @@
   background: linear-gradient(135deg, #28a745, #20c997);
 }
 
-.sell-btn.modern {
+.action-btn.modern {
   background: linear-gradient(135deg, #dc3545, #fd7e14);
 }
 
