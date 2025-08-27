@@ -10,11 +10,17 @@ const Holdings = () => {
     fetchHoldings();
   }, []);
 
-  const fetchHoldings = () => {
-    axios.get("http://localhost:3002/allHoldings").then((res) => {
+ const fetchHoldings = () => {
+  axios
+    .get("http://localhost:3002/allHoldings")
+    .then((res) => {
       setAllHoldings(res.data);
+    })
+    .catch((err) => {
+      console.error("Error fetching holdings:", err);
     });
-  };
+};
+
 
   const handleSell = async (id, maxQty) => {
     const qtyToSell = prompt(

@@ -3,7 +3,13 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const session=require("express-session");
 const cors = require("cors");
+
+
+const passport=require("passport");
+const LocalStrategy=require("passport-local");
+const User=require("./model/UsersModel");
 
 const HoldingsModel = require("./model/HoldingsModel");
 const OrdersModel  = require("./model/OrdersModel");
@@ -14,8 +20,40 @@ const uri = process.env.MONGO_URL;
 const app = express();
 
 
-app.use(cors());
 app.use(bodyParser.json());
+
+app.use(cors());
+
+app.use(express.json());
+app.use(session({
+  secret: "secret-key",
+  resave: false,
+  saveUninitialized: false,
+  cookie:{
+    expires: Date.now()+7*24*60*60*1000,
+    maxAge: 7*24*60*60*1000,
+    httpOnly: true,
+  }
+}));
+
+
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+
+app.get("/demouser",async(req,res)=>{
+  let fakeUser={
+    username:"user1",
+    password:"123456",
+  }
+  let rps=await User.register(fakeUser);
+  res.send(rps);
+})
 
 
 app.get("/allHoldings", async (req, res) => {
@@ -23,12 +61,10 @@ app.get("/allHoldings", async (req, res) => {
   res.json(allHoldings);
 });
 
-
 app.get("/allOrders",async(req,res)=>{
    let allOrders= await OrdersModel.find({});
    res.json(allOrders);
 });
-
 
 app.post("/newOrder", async (req, res) => {
   try {
@@ -80,7 +116,6 @@ app.post("/newOrder", async (req, res) => {
   }
 });
 
-
 // sell holdings with qty
 app.post("/sellholdings/:id", async (req, res) => {
   try {
@@ -127,8 +162,6 @@ app.post("/sellholdings/:id", async (req, res) => {
     res.status(500).send("Failed to sell holding.");
   }
 });
-
-
 
 mongoose.connect(uri)
   .then(() => {
