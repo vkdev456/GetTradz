@@ -6,7 +6,6 @@ const bodyParser = require("body-parser");
 const session=require("express-session");
 const cors = require("cors");
 
-
 const passport=require("passport");
 const LocalStrategy=require("passport-local");
 const User=require("./model/UsersModel");
@@ -14,11 +13,9 @@ const User=require("./model/UsersModel");
 const HoldingsModel = require("./model/HoldingsModel");
 const OrdersModel  = require("./model/OrdersModel");
 
-
 const PORT = process.env.PORT || 3002;
 const uri = process.env.MONGO_URL;
 const app = express();
-
 
 app.use(bodyParser.json());
 
@@ -41,19 +38,65 @@ app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
 
-
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-
 app.get("/demouser",async(req,res)=>{
-  let fakeUser={
+  let fakeUser=new User({
     username:"user1",
-    password:"123456",
-  }
-  let rps=await User.register(fakeUser);
+    email:"demo@gmail.com"   
+  });
+  let rps=await User.register(fakeUser,"helloworld");
   res.send(rps);
 })
+
+app.post("/signup", async (req,res)=>{
+     res.send("form");
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 app.get("/allHoldings", async (req, res) => {
