@@ -63,7 +63,6 @@ app.post("/signup", async (req,res)=>{
 });
 
 // login
-// login
 app.post(
   "/login",
   passport.authenticate("local"),

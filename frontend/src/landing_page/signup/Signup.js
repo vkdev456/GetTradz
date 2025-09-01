@@ -16,6 +16,8 @@ function Signup() {
     // Optionally show success alert first
     alert("Signup successful: " + res.data.username);
 
+
+    
     // Redirect to frontend homepage
     window.location.href = "http://localhost:3001";
   } catch (err) {
