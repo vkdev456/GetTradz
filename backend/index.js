@@ -19,9 +19,13 @@ const app = express();
 
 app.use(bodyParser.json());
 
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:3000",  // frontend
+  credentials: true,//to allow cookies
+})); 
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(session({
   secret: "secret-key",
   resave: false,
@@ -34,6 +38,7 @@ app.use(session({
 }));
 
 
+//login and signup
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
@@ -41,23 +46,31 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-app.get("/demouser",async(req,res)=>{
-  let fakeUser=new User({
-    username:"user1",
-    email:"demo@gmail.com"   
-  });
-  let rps=await User.register(fakeUser,"helloworld");
-  res.send(rps);
-})
 
+//add new user
 app.post("/signup", async (req,res)=>{
-     res.send("form");
+
+    let {username,email,password}=req.body;
+
+    let user1=new User({
+      username:username,
+      email:email
+    })
+
+    let rps = await User.register(user1,password);
+    res.json({ success: true, message: "Signu Successful" });
+
 });
 
-
-
-
-
+// login
+// login
+app.post(
+  "/login",
+  passport.authenticate("local"),
+  (req, res) => {
+    res.json({ success: true, message: "Login Successful" });
+  }
+);
 
 
 

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import axios from "axios";
 
 function Login() {
   const [username, setUsername] = useState("");
@@ -7,23 +8,20 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:3002/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include", 
-        body: JSON.stringify({ username, password }),
-      });
+      const res = await axios.post(
+        "http://localhost:3002/login",
+        { username, password },
+        { withCredentials: true } // important if using cookies/session
+      );
 
-      if (res.ok) {
-        window.location.href = "/dashboard"; 
+      if (res.data.success) {
+        window.location.href = "http://localhost:3001"; // redirect on success
       } else {
-        alert("Login failed!");
+        alert("Login failed please Enter Correct Credentials");
       }
     } catch (err) {
       console.error(err);
-      alert("Error logging in");
+      alert("Error logging in: " + (err.response?.data?.message || err.message));
     }
   };
 
@@ -34,28 +32,28 @@ function Login() {
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label htmlFor="username" className="form-label">Username</label>
-            <input 
+            <input
               name="username"
               id="username"
               type="text"
               className="form-control"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              required 
+              required
             />
           </div>
 
           <div className="mb-3">
             <label htmlFor="password" className="form-label">Password</label>
-            <input 
+            <input
               name="password"
               id="password"
               type="password"
               className="form-control"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required 
-            /> 
+              required
+            />
           </div>
 
           <button className="btn btn-success w-100">Login</button>
