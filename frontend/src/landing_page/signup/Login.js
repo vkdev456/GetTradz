@@ -8,17 +8,19 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(
-        "http://localhost:3002/login",
-        { username, password },
-        { withCredentials: true } // important if using cookies/session
-      );
+      const res = await axios.post("http://localhost:3002/login", {
+        username,
+        password,
+      });
 
       if (res.data.success) {
-        window.location.href = "http://localhost:3001"; // redirect on success
-      } else {
-        alert("Login failed please Enter Correct Credentials");
+        // Save JWT token 
+        localStorage.setItem("token", res.data.token);
 
+        // Redirect to dashboard
+        window.location.href = "http://localhost:3001";
+      } else {
+        alert("Login failed, please check credentials");
       }
     } catch (err) {
       console.error(err);
@@ -34,7 +36,6 @@ function Login() {
           <div className="mb-3">
             <label htmlFor="username" className="form-label">Username</label>
             <input
-              name="username"
               id="username"
               type="text"
               className="form-control"
@@ -47,7 +48,6 @@ function Login() {
           <div className="mb-3">
             <label htmlFor="password" className="form-label">Password</label>
             <input
-              name="password"
               id="password"
               type="password"
               className="form-control"

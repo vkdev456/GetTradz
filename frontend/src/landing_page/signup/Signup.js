@@ -13,11 +13,9 @@ function Signup() {
     try{
       const res = await axios.post("http://localhost:3002/signup", form);
 
-    // Optionally show success alert first
+    
     alert("Signup successful: " + res.data.username);
 
-
-    
     // Redirect to frontend homepage
     window.location.href = "http://localhost:3001";
   } catch (err) {

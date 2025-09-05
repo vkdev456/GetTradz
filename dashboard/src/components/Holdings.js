@@ -6,22 +6,38 @@ import "./Holdings.css";
 const Holdings = () => {
   const [allHoldings, setAllHoldings] = useState([]);
 
+  // Fetch holdings 
   useEffect(() => {
-    fetchHoldings();
+    const token = localStorage.getItem("token");
+    if (!token) {
+      // Redirect to login if no token
+      window.location.href = "http://localhost:3000/login";
+    } else {
+      fetchHoldings(token);
+    }
   }, []);
 
- const fetchHoldings = () => {
-  axios
-    .get("http://localhost:3002/allHoldings")
-    .then((res) => {
-      setAllHoldings(res.data);
-    })
-    .catch((err) => {
-      console.error("Error fetching holdings:", err);
-    });
-};
+  // Fetch holdings with JWT token
+  const fetchHoldings = (token) => {
+    axios
+      .get("http://localhost:3002/allHoldings", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        setAllHoldings(res.data);
+      })
+      .catch((err) => {
+        console.error("Error fetching holdings:", err);
+        if (err.response?.status === 401) {
+          // Token expired or invalid
+          alert("Session expired. Please login again.");
+          localStorage.removeItem("token");
+          window.location.href = "http://localhost:3000/login";
+        }
+      });
+  };
 
-
+  // Sell holdings
   const handleSell = async (id, maxQty) => {
     const qtyToSell = prompt(
       `Enter quantity to sell (Available: ${maxQty}):`,
@@ -33,17 +49,30 @@ const Holdings = () => {
       return;
     }
 
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Session expired. Please login again.");
+      window.location.href = "http://localhost:3000/login";
+      return;
+    }
+
     try {
-      await axios.post(`http://localhost:3002/sellholdings/${id}`, {
-        qty: parseInt(qtyToSell, 10),
-      });
+      await axios.post(
+        `http://localhost:3002/sellholdings/${id}`,
+        { qty: parseInt(qtyToSell, 10) },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       // Refresh holdings after selling
-      fetchHoldings();
+      fetchHoldings(token);
     } catch (err) {
       console.error("Error selling stock:", err);
-      alert("Failed to sell stock.");
+      alert(
+        "Failed to sell stock: " +
+          (err.response?.data || err.message)
+      );
     }
   };
+
 
   const labels = allHoldings.map((stock) => stock.name);
   const data = {
@@ -77,7 +106,7 @@ const Holdings = () => {
           <tbody>
             {allHoldings.map((stock) => {
               const curValue = stock.price * stock.qty;
-              const isProfit = curValue - stock.avg * stock.qty >= 0.0;
+              const isProfit = curValue - stock.avg * stock.qty >= 0;
               const profClass = isProfit ? "profit" : "loss";
 
               return (
