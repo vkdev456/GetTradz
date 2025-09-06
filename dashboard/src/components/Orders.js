@@ -6,13 +6,27 @@ const Orders = () => {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:3002/allOrders")
-      .then((res) => {
+    const fetchOrders = async () => {
+      try {
+        const token = localStorage.getItem("token"); // get token from storage
+        if (!token) {
+          console.warn("No token found, redirect to login maybe?");
+          return;
+        }
+
+        const res = await axios.get("http://localhost:3002/allOrders", {
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ Bearer prefix
+          },
+        });
+
         setOrders(res.data);
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error("Error fetching orders:", err);
-      });
+      }
+    };
+
+    fetchOrders();
   }, []);
 
   return (
@@ -38,7 +52,7 @@ const Orders = () => {
             </thead>
             <tbody>
               {orders.map((order, index) => (
-                <tr key={index}>
+                <tr key={order._id || index}>
                   <td>{order.name}</td>
                   <td>{order.qty}</td>
                   <td>{order.price}</td>

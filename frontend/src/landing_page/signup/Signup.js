@@ -10,17 +10,20 @@ function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try{
+    try {
       const res = await axios.post("http://localhost:3002/signup", form);
 
-    
-    alert("Signup successful: " + res.data.username);
-
-    // Redirect to frontend homepage
-    window.location.href = "http://localhost:3001";
-  } catch (err) {
-    alert("Signup failed: " + (err.response?.data?.message || err.message));
-  }
+      if (res.data.success) {
+        alert("Signup successful! Please login.");
+        // Redirect to login page
+        window.location.href = "http://localhost:3000/login";
+      }else {
+        alert("Signup failed: " + res.data.message);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Signup failed. Try again.");
+    }
   };
 
   return (
@@ -42,7 +45,7 @@ function Signup() {
           </div>
 
           <div className="mb-3">
-            <label htmlFor="email " className="form-label">Email</label>
+            <label htmlFor="email" className="form-label">Email</label>
             <input 
               name="email"
               id="email"
