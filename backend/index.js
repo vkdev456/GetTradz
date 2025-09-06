@@ -8,30 +8,29 @@ const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-
+//Import Models
 const UserModel = require("./model/UsersModel");
 const HoldingsModel = require("./model/HoldingsModel");
 const OrdersModel = require("./model/OrdersModel");
 
 const PORT = process.env.PORT || 3002;
 const uri = process.env.MONGO_URL;
-const JWT_SECRET = process.env.JWT_SECRET || "supersecret123"; 
+const JWT_SECRET = process.env.JWT_SECRET || "supersecret123";
 
 const app = express();
 
+// ----------------- Middleware -----------------
 app.use(bodyParser.json());
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:3001"], 
+    origin: ["http://localhost:3000", "http://localhost:3001"],
     credentials: true,
   })
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// -----------------Middleware -----------------
-
-//     JWT 
+// ----------------- JWT Auth Middleware -----------------
 function authMiddleware(req, res, next) {
   const authHeader = req.headers["authorization"];
   if (!authHeader) return res.status(401).json({ message: "No token" });
@@ -39,16 +38,19 @@ function authMiddleware(req, res, next) {
   const token = authHeader.split(" ")[1];
   jwt.verify(token, JWT_SECRET, (err, decoded) => {
     if (err) return res.status(401).json({ message: "Invalid token" });
-    req.user = decoded; // attach user info
+    req.user = decoded; // attach user info { id, username }
     next();
   });
 }
 
-// Signup - JWT
+// ----------------- Routes -----------------
+
+// Signup
 app.post("/signup", async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
+    // Check if username already exists
     const existingUser = await UserModel.findOne({ username });
     if (existingUser) {
       return res
@@ -56,26 +58,35 @@ app.post("/signup", async (req, res) => {
         .json({ success: false, message: "Username already exists" });
     }
 
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Create new user
     const newUser = new UserModel({
       username,
       email,
       passwordHash: hashedPassword,
+      funds: 100000, // optional: initial funds
     });
 
     await newUser.save();
 
-    res.json({ success: true, message: "User registered successfully" });
+    // Create JWT token for the new user
+    const token = jwt.sign(
+      { id: newUser._id, username: newUser.username },
+      JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    // Return token along with success
+    res.json({ success: true, message: "User registered successfully", token });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: "Error creating user" });
   }
 });
-
-
-
-// login -> jwt
+ 
+// Login -> JWT
 app.post("/login", async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -107,77 +118,99 @@ app.post("/login", async (req, res) => {
   }
 });
 
-
-
+// Holdings 
 app.get("/allHoldings", authMiddleware, async (req, res) => {
-  let allHoldings = await HoldingsModel.find({});
-  res.json(allHoldings);
+  const holdings = await HoldingsModel.find({ userId: req.user.id });
+  res.json(holdings);
 });
 
 app.get("/allOrders", authMiddleware, async (req, res) => {
-  let allOrders = await OrdersModel.find({});
-  res.json(allOrders);
+  const orders = await OrdersModel.find({ userId: req.user.id });
+  res.json(orders);
 });
 
 app.post("/newOrder", authMiddleware, async (req, res) => {
   try {
+    const userId = req.user.id;
+    const { name, qty, price, mode } = req.body;
+
+    // Get user
+    let user = await UserModel.findById(userId);
+
+    if (!user) return res.status(404).send("User not found.");
+
+    if (mode === "BUY") {
+      const totalCost = qty * price;
+
+      // Check funds
+      if (user.funds < totalCost) {
+        return res.status(400).send("Insufficient funds to complete this order.");
+      }
+
+      // Deduct funds
+      user.funds -= totalCost;
+      await user.save();
+    }
+
     // Save new order
     let newOrder = new OrdersModel({
-      name: req.body.name,
-      qty: req.body.qty,
-      price: req.body.price,
-      mode: req.body.mode,
+      userId,
+      name,
+      qty,
+      price,
+      mode,
     });
     await newOrder.save();
 
-    // If holding already exists
-    let existingHolding = await HoldingsModel.findOne({ name: req.body.name });
+    if (mode === "BUY") {
+      // If holding already exists for this user
+      let existingHolding = await HoldingsModel.findOne({ userId, name });
 
-    if (existingHolding) {
-      // Calculate average price
-      let totalQty = existingHolding.qty + req.body.qty;
-      let newAvg =
-        (existingHolding.avg * existingHolding.qty +
-          req.body.price * req.body.qty) /
-        totalQty;
+      if (existingHolding) {
+        // Calculate average price
+        let totalQty = existingHolding.qty + qty;
+        let newAvg =
+          (existingHolding.avg * existingHolding.qty + price * qty) / totalQty;
 
-      existingHolding.qty = totalQty;
-      existingHolding.avg = newAvg;
-      existingHolding.price = req.body.price; // latest price
-      existingHolding.day = new Date().toISOString().slice(0, 10);
-      await existingHolding.save();
-    } else {
-      // Create new holding
-      let newHolding = new HoldingsModel({
-        name: req.body.name,
-        qty: req.body.qty,
-        avg: req.body.price,
-        price: req.body.price,
-        net: "0",
-        day: new Date().toISOString().slice(0, 10),
-      });
-      await newHolding.save();
+        existingHolding.qty = totalQty;
+        existingHolding.avg = newAvg;
+        existingHolding.price = price; // latest price
+        existingHolding.day = new Date().toISOString().slice(0, 10);
+        await existingHolding.save();
+      } else {
+        // Create new holding
+        let newHolding = new HoldingsModel({
+          userId,
+          name,
+          qty,
+          avg: price,
+          price,
+          net: "0",
+          day: new Date().toISOString().slice(0, 10),
+        });
+        await newHolding.save();
+      }
     }
 
-    res.send("Order and Holding updated/saved!");
+    res.send("Order placed successfully, funds updated.");
   } catch (err) {
     console.error(err);
-    res.status(500).send("Failed to save order and holding.");
+    res.status(500).send("Failed to save order and update funds.");
   }
 });
 
-
-// sell 
+//  Sell Holdings
 app.post("/sellholdings/:id", authMiddleware, async (req, res) => {
   try {
     const id = req.params.id;
     const sellQty = req.body.qty;
+    const userId = req.user.id;
 
     if (!sellQty || sellQty <= 0) {
       return res.status(400).send("Invalid quantity to sell.");
     }
 
-    let holding = await HoldingsModel.findById(id);
+    let holding = await HoldingsModel.findOne({ _id: id, userId });
     if (!holding) {
       return res.status(404).send("Holding not found.");
     }
@@ -186,8 +219,16 @@ app.post("/sellholdings/:id", authMiddleware, async (req, res) => {
       return res.status(400).send("Not enough quantity to sell.");
     }
 
+    const sellValue = holding.price * sellQty;
+
+    // Update user's funds (CREDIT)
+    let user = await UserModel.findById(userId);
+    user.funds += sellValue;
+    await user.save();
+
     // record sell order
     let sellOrder = new OrdersModel({
+      userId,
       name: holding.name,
       qty: sellQty,
       price: holding.price,
@@ -204,13 +245,22 @@ app.post("/sellholdings/:id", authMiddleware, async (req, res) => {
       await holding.save();
     }
 
-    res.send("Sold successfully!");
+    res.send("Sold successfully! Funds updated.");
   } catch (err) {
     console.error(err);
     res.status(500).send("Failed to sell holding.");
   }
 });
 
+app.get("/funds", authMiddleware, async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.user.id);
+    res.json({ funds: user.funds });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error fetching funds.");
+  }
+});
 
 
 mongoose.connect(uri)
