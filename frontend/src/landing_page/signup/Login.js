@@ -14,11 +14,8 @@ function Login() {
       });
 
       if (res.data.success) {
-        // Save JWT token 
-        localStorage.setItem("token", res.data.token);
-
-        // Redirect to dashboard
-        window.location.href = "http://localhost:3001";
+        
+        window.location.href = `http://localhost:3001?token=${res.data.token}`;
       } else {
         alert("Login failed, please check credentials");
       }
