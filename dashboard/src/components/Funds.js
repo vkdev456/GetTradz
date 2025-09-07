@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "./Funds.css"; // add custom CSS
+import "./Funds.css";
 
 function Funds() {
   const [availableMargin, setAvailableMargin] = useState(0);
@@ -13,7 +13,7 @@ function Funds() {
   const fetchFunds = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
-      setError("No token found. Please login.");
+      setError("Please login.");
       setLoading(false);
       return;
     }
@@ -26,7 +26,6 @@ function Funds() {
       setUsedMargin(funds.usedMargin || 0);
       setAvailableCash(funds.availableCash || 0);
     } catch (err) {
-      console.error("Error fetching funds:", err);
       setError("Failed to fetch funds.");
     } finally {
       setLoading(false);
@@ -37,12 +36,6 @@ function Funds() {
     fetchFunds();
   }, []);
 
-  const updateFunds = (funds) => {
-    setAvailableMargin(funds.availableMargin || 0);
-    setUsedMargin(funds.usedMargin || 0);
-    setAvailableCash(funds.availableCash || 0);
-  };
-
   const handleAddFunds = async () => {
     if (!amount || Number(amount) <= 0) return alert("Enter a valid amount");
     const token = localStorage.getItem("token");
@@ -52,18 +45,18 @@ function Funds() {
         { amount: Number(amount) },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      updateFunds(res.data.funds);
+      setAvailableMargin(res.data.funds.availableMargin);
+      setUsedMargin(res.data.funds.usedMargin);
+      setAvailableCash(res.data.funds.availableCash);
       setAmount("");
     } catch (err) {
-      console.error("Error adding funds:", err);
       alert("Failed to add funds.");
     }
   };
 
   const handleWithdrawFunds = async () => {
     if (!amount || Number(amount) <= 0) return alert("Enter a valid amount");
-    if (Number(amount) > availableMargin)
-      return alert("Cannot withdraw more than available margin");
+    if (Number(amount) > availableMargin) return alert("Insufficient margin");
 
     const token = localStorage.getItem("token");
     try {
@@ -72,83 +65,47 @@ function Funds() {
         { amount: Number(amount) },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      if (!res.data.success) {
-        alert(res.data.message || "Withdrawal failed");
-      } else {
-        updateFunds(res.data.funds);
-      }
+      setAvailableMargin(res.data.funds.availableMargin);
+      setUsedMargin(res.data.funds.usedMargin);
+      setAvailableCash(res.data.funds.availableCash);
       setAmount("");
     } catch (err) {
-      console.error("Error withdrawing funds:", err);
       alert("Failed to withdraw funds.");
     }
   };
 
-  if (loading)
-    return <p className="text-center mt-4">Loading funds...</p>;
-  if (error)
-    return <p className="text-center text-danger mt-4">{error}</p>;
+  if (loading) return <p className="center-text">Loading...</p>;
+  if (error) return <p className="center-text error">{error}</p>;
 
   return (
-    <div className="container mt-5">
-      <h2 className="text-center mb-4">Funds Dashboard</h2>
+    <div className="funds-container">
+      <h2 className="center-text">Funds Dashboard</h2>
 
-      <div className="row mb-4">
-        <div className="col-md-4 mb-3">
-          <div className="card fund-card text-center shadow-sm">
-            <div className="card-body">
-              <h5 className="card-title text-success">Available Margin</h5>
-              <h3>{availableMargin.toFixed(2)}</h3>
-            </div>
-          </div>
+      <div className="funds-grid">
+        <div className="fund-card">
+          <h4>Available Margin</h4>
+          <p>{availableMargin.toFixed(2)}</p>
         </div>
-        <div className="col-md-4 mb-3">
-          <div className="card fund-card text-center shadow-sm">
-            <div className="card-body">
-              <h5 className="card-title text-danger">Used Margin</h5>
-              <h3>{usedMargin.toFixed(2)}</h3>
-            </div>
-          </div>
+        <div className="fund-card">
+          <h4>Used Margin</h4>
+          <p>{usedMargin.toFixed(2)}</p>
         </div>
-        <div className="col-md-4 mb-3">
-          <div className="card fund-card text-center shadow-sm">
-            <div className="card-body">
-              <h5 className="card-title text-primary">Available Cash</h5>
-              <h3>{availableCash.toFixed(2)}</h3>
-            </div>
-          </div>
+        <div className="fund-card">
+          <h4>Available Cash</h4>
+          <p>{availableCash.toFixed(2)}</p>
         </div>
       </div>
 
-      <div className="card shadow-sm p-4 manage-funds-card">
-        <h5 className="mb-3">Manage Funds</h5>
-        <div className="input-group">
-          <input
-            type="number"
-            className="form-control"
-            placeholder="Enter amount"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-          />
-          <button
-            className="btn btn-success"
-            onClick={handleAddFunds}
-            disabled={!amount || Number(amount) <= 0}
-          >
-            Add
-          </button>
-          <button
-            className="btn btn-danger"
-            onClick={handleWithdrawFunds}
-            disabled={
-              !amount ||
-              Number(amount) <= 0 ||
-              Number(amount) > availableMargin
-            }
-          >
-            Withdraw
-          </button>
+      <div className="manage-funds">
+        <input
+          type="number"
+          placeholder="Enter amount"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+        />
+        <div className="buttons">
+          <button onClick={handleAddFunds}>Add</button>
+          <button onClick={handleWithdrawFunds}>Withdraw</button>
         </div>
       </div>
     </div>

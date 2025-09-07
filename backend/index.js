@@ -20,6 +20,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "supersecret123";
 const app = express();
 
 // ----------------- Middleware -----------------
+
 app.use(bodyParser.json());
 app.use(
   cors({
@@ -32,6 +33,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ----------------- JWT Auth Middleware -----------------
+
 function authMiddleware(req, res, next) {
   const authHeader = req.headers["authorization"];
   if (!authHeader) return res.status(401).json({ message: "No token" });
@@ -60,7 +62,7 @@ app.post("/signup", async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create new user with default funds (no openingBalance)
+    // Create new user with default funds 
     const newUser = new UserModel({
       username,
       email,
@@ -107,6 +109,13 @@ app.post("/login", async (req, res) => {
     res.status(500).json({ success: false, message: "Error logging in" });
   }
 });
+
+//logout
+app.post("/logout", (req, res) => {
+  res.clearCookie("token"); 
+  res.json({ success: true, message: "Logged out successfully" });
+});
+
 
 // Get Holdings
 app.get("/allHoldings", authMiddleware, async (req, res) => {
@@ -228,7 +237,6 @@ app.get("/funds", authMiddleware, async (req, res) => {
   }
 });
 
-// Add Funds
 // Add Funds
 app.post("/funds/add", authMiddleware, async (req, res) => {
   try {

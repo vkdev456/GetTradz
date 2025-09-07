@@ -1,388 +1,86 @@
-/* Enhanced Funds Dashboard CSS */
-
+/* Container */
 .funds-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 2rem 1rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.funds-main-card {
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 20px;
-  padding: 2rem;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-  backdrop-filter: blur(10px);
+  padding: 2rem 1rem;
+  font-family: Arial, sans-serif;
 }
 
-.funds-header {
+/* Centered Text */
+.center-text {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
+}
+.error {
+  color: red;
 }
 
-.funds-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: 0.5rem;
-}
-
-.funds-subtitle {
-  color: #6c757d;
-  font-size: 1.1rem;
-}
-
-.funds-card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
+/* Grid for Fund Cards */
+.funds-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
   margin-bottom: 2rem;
 }
 
 .fund-card {
-  background: white;
-  border-radius: 15px;
-  padding: 1.5rem;
-  text-align: center;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-  transition: all 0.3s ease;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  border: none;
-}
-
-.fund-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-}
-
-.fund-card-icon {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  margin: 0 auto 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  font-weight: bold;
-}
-
-.fund-card-icon.total {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white;
-}
-
-.fund-card-icon.available {
-  background: linear-gradient(135deg, #28a745, #20c997);
-  color: white;
-}
-
-.fund-card-icon.used {
-  background: linear-gradient(135deg, #dc3545, #fd7e14);
-  color: white;
-}
-
-.fund-card-icon.cash {
-  background: linear-gradient(135deg, #6f42c1, #e83e8c);
-  color: white;
-}
-
-.fund-card-title {
-  font-size: 0.9rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 0.5rem;
-  opacity: 0.8;
-}
-
-.fund-card-amount {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-}
-
-.fund-card.total .fund-card-title,
-.fund-card.total .fund-card-amount {
-  color: #667eea;
-}
-
-.fund-card.available .fund-card-title,
-.fund-card.available .fund-card-amount {
-  color: #28a745;
-}
-
-.fund-card.used .fund-card-title,
-.fund-card.used .fund-card-amount {
-  color: #dc3545;
-}
-
-.fund-card.cash .fund-card-title,
-.fund-card.cash .fund-card-amount {
-  color: #6f42c1;
-}
-
-.funds-progress-section {
-  margin-bottom: 2rem;
-  text-align: center;
-}
-
-.funds-progress-title {
-  margin-bottom: 1rem;
-  color: #495057;
-  font-weight: 600;
-}
-
-.funds-progress-bar {
-  background: #f0f0f0;
+  flex: 1 1 30%;
+  background: #f7f7f7;
+  padding: 1rem;
   border-radius: 10px;
-  height: 12px;
-  overflow: hidden;
-  margin: 0 auto;
-  max-width: 600px;
-}
-
-.funds-progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #667eea, #764ba2);
-  transition: width 0.3s ease;
-  border-radius: 10px;
-}
-
-.manage-funds-card {
-  background: linear-gradient(135deg, #f8f9ff 0%, #e8f0ff 100%);
-  border-radius: 15px;
-  padding: 2rem;
-  margin-bottom: 2rem;
-  border: none;
-  box-shadow: none;
-}
-
-.manage-funds-title {
   text-align: center;
-  margin-bottom: 1.5rem;
-  color: #495057;
-  font-size: 1.3rem;
-  font-weight: 600;
+  min-width: 200px;
 }
 
-.funds-input-group {
-  max-width: 400px;
-  margin: 0 auto 1.5rem;
+/* Manage Funds Section */
+.manage-funds {
   display: flex;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
-.funds-input-group .form-control {
-  flex: 1;
-  padding: 1rem 1.5rem;
-  border: none;
-  font-size: 1.1rem;
-  outline: none;
-  background: white;
-  border-radius: 0;
-}
-
-.funds-button-group {
-  display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
   justify-content: center;
-  margin-bottom: 2rem;
+  margin-top: 1rem;
 }
 
-.funds-btn {
-  padding: 1rem 2rem;
+.manage-funds input {
+  padding: 0.8rem;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  min-width: 150px;
+}
+
+.buttons button {
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 5px;
   border: none;
-  font-weight: 600;
-  font-size: 1rem;
   cursor: pointer;
-  transition: all 0.3s ease;
-  min-width: 140px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
 }
 
-.funds-btn.add {
-  background: linear-gradient(135deg, #28a745, #20c997);
+.buttons button:first-child {
+  background-color: #28a745;
   color: white;
 }
 
-.funds-btn.add:hover:not(:disabled) {
-  background: linear-gradient(135deg, #218838, #1ea584);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
-}
-
-.funds-btn.withdraw {
-  background: linear-gradient(135deg, #dc3545, #fd7e14);
+.buttons button:last-child {
+  background-color: #dc3545;
   color: white;
 }
 
-.funds-btn.withdraw:hover:not(:disabled) {
-  background: linear-gradient(135deg, #c82333, #e8680c);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(220, 53, 69, 0.3);
-}
-
-.funds-btn:disabled {
-  background: #e9ecef !important;
-  color: #6c757d !important;
-  cursor: not-allowed;
-  transform: none !important;
-  box-shadow: none !important;
-}
-
-.funds-quick-actions {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 1rem;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.funds-quick-btn {
-  background: white;
-  border: 2px solid #e9ecef;
-  border-radius: 10px;
-  padding: 1rem;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: 600;
-}
-
-.funds-quick-btn:hover:not(:disabled) {
-  border-color: #667eea;
-  background: #f8f9ff;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
-}
-
-.funds-quick-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.funds-quick-amount {
-  color: #667eea;
-  font-weight: 700;
-  font-size: 1rem;
-}
-
-.funds-quick-label {
-  font-size: 0.8rem;
-  color: #6c757d;
-  margin-bottom: 0.25rem;
-}
-
-.funds-success {
-  background: linear-gradient(135deg, #d4edda, #c3e6cb);
-  color: #155724;
-  padding: 1rem;
-  border-radius: 10px;
-  text-align: center;
-  margin-bottom: 1.5rem;
-  font-weight: 600;
-  animation: fadeInUp 0.3s ease;
-}
-
-.funds-error {
-  background: linear-gradient(135deg, #f8d7da, #f1b0b7);
-  color: #721c24;
-  padding: 1rem;
-  border-radius: 10px;
-  text-align: center;
-  margin-bottom: 1.5rem;
-  font-weight: 600;
-}
-
-.funds-loading {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  border: 2px solid #f3f3f3;
-  border-top: 2px solid #667eea;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-.funds-loading-screen {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.funds-loading-content {
-  text-align: center;
-  color: white;
-}
-
-.funds-loading-content .funds-loading {
-  width: 40px;
-  height: 40px;
-  border-color: white;
-  border-top-color: #667eea;
-  margin: 0 auto 1rem;
-}
-
-/* Animations */
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-@keyframes fadeInUp {
-  from { 
-    opacity: 0; 
-    transform: translateY(-20px); 
-  }
-  to { 
-    opacity: 1; 
-    transform: translateY(0); 
-  }
-}
-
-/* Responsive Design */
+/* Responsive */
 @media (max-width: 768px) {
-  .funds-container {
-    padding: 1rem;
-  }
-  
-  .funds-main-card {
-    padding: 1.5rem;
-  }
-  
-  .funds-title {
-    font-size: 2rem;
-  }
-  
-  .funds-card-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .funds-button-group {
+  .funds-grid {
     flex-direction: column;
   }
-  
-  .funds-btn {
-    width: 100%;
+  .fund-card {
+    flex: 1 1 100%;
   }
-  
-  .funds-quick-actions {
-    grid-template-columns: repeat(2, 1fr);
+  .manage-funds {
+    flex-direction: column;
+    align-items: center;
+  }
+  .buttons button {
+    width: 100%;
   }
 }
