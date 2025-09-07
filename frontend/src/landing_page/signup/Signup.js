@@ -11,12 +11,12 @@ function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:3002/signup", form);
+      const res = await axios.post("https://gtbackend-izyf.onrender.com/signup", form);
 
       if (res.data.success) {
         alert("Signup successful! Please login.");
         // Redirect to login page
-        window.location.href = "http://localhost:3000/login";
+        window.location.href = "https://gettradz.vercel.app/login";
       }else {
         alert("Signup failed: " + res.data.message);
       }

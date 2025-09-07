@@ -11,7 +11,7 @@ const Holdings = () => {
     const token = localStorage.getItem("token");
     if (!token) {
       // Redirect to login if no token
-      window.location.href = "http://localhost:3000/login";
+      window.location.href = "https://gettradz.vercel.app/login";
     } else {
       fetchHoldings(token);
     }
@@ -20,7 +20,7 @@ const Holdings = () => {
   // Fetch holdings with JWT token
   const fetchHoldings = (token) => {
     axios
-      .get("http://localhost:3002/allHoldings", {
+      .get("https://gtbackend-izyf.onrender.com/allHoldings", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -32,7 +32,7 @@ const Holdings = () => {
           // Token expired or invalid
           alert("Session expired. Please login again.");
           localStorage.removeItem("token");
-          window.location.href = "http://localhost:3000/login";
+          window.location.href = "https://gettradz.vercel.app/login";
         }
       });
   };
@@ -52,13 +52,13 @@ const Holdings = () => {
     const token = localStorage.getItem("token");
     if (!token) {
       alert("Session expired. Please login again.");
-      window.location.href = "http://localhost:3000/login";
+      window.location.href = "https://gettradz.vercel.app/login";
       return;
     }
 
     try {
       await axios.post(
-        `http://localhost:3002/sellholdings/${id}`,
+        `https://gtbackend-izyf.onrender.com/sellholdings/${id}`,
         { qty: parseInt(qtyToSell, 10) },
         { headers: { Authorization: `Bearer ${token}` } }
       );

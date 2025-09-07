@@ -18,7 +18,7 @@ function Funds() {
       return;
     }
     try {
-      const res = await axios.get("http://localhost:3002/funds", {
+      const res = await axios.get("https://gtbackend-izyf.onrender.com/funds", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const funds = res.data || {};
@@ -41,7 +41,7 @@ function Funds() {
     const token = localStorage.getItem("token");
     try {
       const res = await axios.post(
-        "http://localhost:3002/funds/add",
+        "https://gtbackend-izyf.onrender.com/funds/add",
         { amount: Number(amount) },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -61,7 +61,7 @@ function Funds() {
     const token = localStorage.getItem("token");
     try {
       const res = await axios.post(
-        "http://localhost:3002/funds/withdraw",
+        "https://gtbackend-izyf.onrender.com/funds/withdraw",
         { amount: Number(amount) },
         { headers: { Authorization: `Bearer ${token}` } }
       );

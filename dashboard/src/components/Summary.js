@@ -14,7 +14,7 @@ const Summary = () => {
       }
 
       try {
-        const res = await axios.get("http://localhost:3002/funds", {
+        const res = await axios.get("https://gtbackend-izyf.onrender.com/funds", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setFunds(res.data);

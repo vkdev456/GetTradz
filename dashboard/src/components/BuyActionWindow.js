@@ -19,7 +19,7 @@ const BuyActionWindow = ({ uid }) => {
       }
 
       await axios.post(
-        "http://localhost:3002/newOrder",
+        "https://gtbackend-izyf.onrender.com/newOrder",
         {
           name: uid,
           qty: Number(stockQuantity),

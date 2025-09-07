@@ -14,7 +14,7 @@ const Orders = () => {
           return;
         }
 
-        const res = await axios.get("http://localhost:3002/allOrders", {
+        const res = await axios.get("https://gtbackend-izyf.onrender.com/allOrders", {
           headers: {
             Authorization: `Bearer ${token}`, // Bearer prefix
           },

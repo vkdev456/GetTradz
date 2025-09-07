@@ -8,14 +8,14 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:3002/login", {
+      const res = await axios.post("https://gtbackend-izyf.onrender.com/login", {
         username,
         password,
       });
 
       if (res.data.success) {
         
-        window.location.href = `http://localhost:3001?token=${res.data.token}`;
+        window.location.href = `https://gtdboard.vercel.app?token=${res.data.token}`;
       } else {
         alert("Login failed, please check credentials");
       }
