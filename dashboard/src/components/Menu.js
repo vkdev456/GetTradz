@@ -6,7 +6,7 @@ const Menu = () => {
   const [selectedMenu, setSelectedMenu] = useState(0);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [username, setUsername] = useState("Guest");
-  const navigate = useNavigate();
+
 
   useEffect(() => {
     const token = localStorage.getItem("token");
