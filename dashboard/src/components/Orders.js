@@ -16,7 +16,7 @@ const Orders = () => {
 
         const res = await axios.get("http://localhost:3002/allOrders", {
           headers: {
-            Authorization: `Bearer ${token}`, // ✅ Bearer prefix
+            Authorization: `Bearer ${token}`, // Bearer prefix
           },
         });
 

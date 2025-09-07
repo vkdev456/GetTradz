@@ -2,25 +2,33 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 const Summary = () => {
-  const [funds, setFunds] = useState(0);
+  const [funds, setFunds] = useState(null); // start with null to detect loading
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchFunds = async () => {
       const token = localStorage.getItem("token");
-      if (!token) return;
+      if (!token) {
+        setError("No token found. Please login.");
+        return;
+      }
 
       try {
         const res = await axios.get("http://localhost:3002/funds", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setFunds(res.data.funds);
+        setFunds(res.data);
       } catch (err) {
         console.error("Error fetching funds:", err);
+        setError("Failed to fetch funds. Please try again.");
       }
     };
 
     fetchFunds();
   }, []);
+
+  if (error) return <p className="text-danger">{error}</p>;
+  if (!funds) return <p>Loading...</p>;
 
   return (
     <>
@@ -35,7 +43,7 @@ const Summary = () => {
         </span>
         <div className="data">
           <div className="first">
-            <h3>{funds.toLocaleString()}</h3>
+            <h3>{Number(funds.availableCash).toLocaleString()}</h3>
             <p>Available Balance</p>
           </div>
         </div>
